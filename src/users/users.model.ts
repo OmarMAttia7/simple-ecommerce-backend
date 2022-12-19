@@ -1,6 +1,8 @@
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+import hashPassword from './model/hashPassword';
+import verifyPassword from './model/verifyPassword';
 
 export class UsersModel {
   users: User[];
@@ -8,13 +10,16 @@ export class UsersModel {
     this.users = users;
   }
 
-  create(createUserDto: CreateUserDto) {
-    return this.users.push({
+  async create(createUserDto: CreateUserDto) {
+    const hashedPassword = await this.hashPassword(createUserDto.password);
+    const user = {
       id: this.users.length + 1,
       username: createUserDto.username,
       email: createUserDto.email,
-      password_digest: createUserDto.password + 'hashed',
-    });
+      password_digest: hashedPassword,
+    };
+    this.users.push(user);
+    return user;
   }
 
   findAll() {
@@ -38,5 +43,13 @@ export class UsersModel {
       if (user.id === id) return false;
       return true;
     });
+  }
+
+  async hashPassword(password: string): Promise<string> {
+    return await hashPassword(password);
+  }
+
+  async verifyPassword(hash: string, password: string): Promise<boolean> {
+    return await verifyPassword(hash, password);
   }
 }
