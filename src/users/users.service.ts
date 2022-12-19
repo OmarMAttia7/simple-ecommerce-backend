@@ -33,8 +33,8 @@ export class UsersService {
     return `${password}hashed`;
   }
 
-  comparePassword(password: string): boolean {
-    if (`${password}hashed` === this.hashPassword(password)) return true;
+  comparePassword(password: string, hash: string): boolean {
+    if (this.hashPassword(password) === hash) return true;
     return false;
   }
 }
