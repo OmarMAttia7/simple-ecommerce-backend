@@ -6,7 +6,6 @@ import { CreateUserDto } from './dto/create-user.dto';
 
 describe('UsersController', () => {
   let controller: UsersController;
-  let services: UsersService;
 
   const testUser: CreateUserDto = {
     username: 'omarmattia7',
@@ -21,7 +20,6 @@ describe('UsersController', () => {
     }).compile();
 
     controller = module.get<UsersController>(UsersController);
-    services = module.get<UsersService>(UsersService);
   });
 
   it('should be defined', () => {
@@ -32,24 +30,14 @@ describe('UsersController', () => {
     expect(controller.create(testUser)).toBeDefined();
   });
 
-  it('should return all users', () => {
-    controller.create(testUser);
-    expect(controller.findAll()).toContainEqual<User>({
-      id: 1,
-      username: testUser.username,
-      email: testUser.email,
-      password_digest: services.hashPassword(testUser.password),
-    });
+  it('should return all users', async () => {
+    const user = await controller.create(testUser);
+    expect(controller.findAll()).toContainEqual<User>(user);
   });
 
-  it('should return a user by id', () => {
-    controller.create(testUser);
-    expect(controller.findOne('1')).toEqual<User>({
-      id: 1,
-      username: testUser.username,
-      email: testUser.email,
-      password_digest: services.hashPassword(testUser.password),
-    });
+  it('should return a user by id', async () => {
+    const user = await controller.create(testUser);
+    expect(controller.findOne('1')).toEqual<User>(user);
   });
 
   it('should delete a user by id', () => {
