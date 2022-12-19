@@ -5,6 +5,7 @@ A simple e-commerce app I am building as an exercise in NestJS and TypeORM.
 ## Todo
 
 - Set up database with TypeORM
+- Add validation to request parameters
 
 ### Requirements
 
