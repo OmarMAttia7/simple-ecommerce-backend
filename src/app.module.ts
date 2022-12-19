@@ -20,7 +20,9 @@ import { DataSource } from 'typeorm';
         password: configService.get('db.password'),
         database: configService.get('db.database'),
         host: configService.get('db.host'),
-        port: +configService.get('db.port')
+        port: +configService.get('db.port'),
+        synchronize: true,
+        autoLoadEntities: true
       }),
       dataSourceFactory: async (options) => {
         const dataSource = await new DataSource(options).initialize();

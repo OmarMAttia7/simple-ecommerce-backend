@@ -2,30 +2,52 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
-import { UsersModel } from './users.model';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import hashPassword from './model/hashPassword';
+import verifyPassword from './model/verifyPassword';
 
 @Injectable()
 export class UsersService {
-  private readonly users: User[] = [];
-  private readonly model: UsersModel = new UsersModel(this.users);
+  constructor(
+    @InjectRepository(User) private userRepository: Repository<User>,
+  ) {}
 
-  create(createUserDto: CreateUserDto) {
-    return this.model.create(createUserDto);
+  async create(createUserDto: CreateUserDto) {
+    const user = new User();
+    user.username = createUserDto.username;
+    user.email = createUserDto.email;
+    user.password_digest = await this.hashPassword(createUserDto.password);
+
+    return this.userRepository.save(user);
   }
 
   findAll() {
-    return this.model.findAll();
+    return this.userRepository.find();
   }
 
   findOne(id: number) {
-    return this.model.findOne(id);
+    return this.userRepository.findOneBy({ id: id });
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return this.model.update(id, updateUserDto);
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    const userToUpdate = await this.userRepository.findOneBy({ id: id });
+    for (const property in updateUserDto) {
+      userToUpdate[property] = updateUserDto[property];
+    }
+    return await this.userRepository.save(userToUpdate);
   }
 
-  remove(id: number) {
-    return this.model.remove(id);
+  async remove(id: number) {
+    const userToRemove = await this.userRepository.findOneBy({ id: id });
+    return await this.userRepository.delete(userToRemove);
+  }
+
+  async hashPassword(password: string): Promise<string> {
+    return await hashPassword(password);
+  }
+
+  async verifyPassword(hash: string, password: string): Promise<boolean> {
+    return await verifyPassword(hash, password);
   }
 }
