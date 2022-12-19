@@ -28,12 +28,4 @@ export class UsersService {
   remove(id: number) {
     return this.model.remove(id);
   }
-
-  async hashPassword(password: string): Promise<string> {
-    return await this.model.hashPassword(password);
-  }
-
-  async verifyPassword(hash: string, password: string): Promise<boolean> {
-    return await this.model.verifyPassword(hash, password);
-  }
 }

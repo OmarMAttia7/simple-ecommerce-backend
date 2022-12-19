@@ -15,19 +15,4 @@ describe('UsersService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
-
-  it('should hash password', async () => {
-    const testPassword = 'p4ssw0rdorsomething';
-    const hash = await service.hashPassword(testPassword);
-
-    expect(hash).not.toEqual(testPassword);
-  });
-
-  it('should verify if password and hash match', async () => {
-    const testPassword = 'p4ssw0rdorsomething';
-    const hash = await service.hashPassword(testPassword);
-    const verified = await service.verifyPassword(hash, testPassword);
-
-    expect(verified).toEqual(true);
-  });
 });
