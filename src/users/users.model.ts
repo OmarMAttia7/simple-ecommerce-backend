@@ -6,18 +6,23 @@ import verifyPassword from './model/verifyPassword';
 
 export class UsersModel {
   users: User[];
+  nextId: number;
   constructor(users: User[]) {
     this.users = users;
+    this.nextId = 1;
   }
 
   async create(createUserDto: CreateUserDto) {
     const hashedPassword = await this.hashPassword(createUserDto.password);
+    
     const user = {
-      id: this.users.length + 1,
+      id: this.nextId,
       username: createUserDto.username,
       email: createUserDto.email,
       password_digest: hashedPassword,
     };
+
+    this.nextId++;
     this.users.push(user);
     return user;
   }
