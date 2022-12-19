@@ -15,4 +15,15 @@ describe('UsersService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
+
+  it('should hash password', () => {
+    const testPassword = 'p4ssw0rdorsomething';
+    expect(service.hashPassword(testPassword)).not.toEqual(testPassword);
+  });
+
+  it('should compare password and hash', () => {
+    const testPassword = 'p4ssw0rdorsomething';
+    const hash = service.hashPassword(testPassword);
+    expect(service.comparePassword(testPassword, hash)).toEqual(true);
+  });
 });
